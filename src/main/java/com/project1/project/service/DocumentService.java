@@ -1,6 +1,6 @@
 package com.project1.project.service;
 
-import com.project1.project.model.DocumentEntity;
+import com.project1.project.model.Document;
 import com.project1.project.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
-    public UUID saveDocument(DocumentEntity document) {
+    public UUID saveDocument(Document document) {
         document.setDocument_id(UUID.randomUUID());
 
         Date date = new Date();
@@ -32,9 +32,9 @@ public class DocumentService {
         return UUID.fromString(document.getDocument_id().toString());
     }
 
-    public ResponseEntity<DocumentEntity> getDocumentById(UUID documentId) {
+    public ResponseEntity<Document> getDocumentById(UUID documentId) {
         System.out.println("searching for document id: " + documentId);
-        DocumentEntity document = documentRepository.findById(documentId).orElse(null);
+        Document document = documentRepository.findById(documentId).orElse(null);
 
         System.out.println("Document found : " + document);
         return ResponseEntity.ok(document);

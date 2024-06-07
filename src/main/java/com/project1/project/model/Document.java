@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.UUID;
@@ -15,8 +14,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "documents")
-public class DocumentEntity {
+@org.springframework.data.mongodb.core.mapping.Document(collection = "client")
+
+public class Document{
 
     @Id
     private UUID document_id;
@@ -30,10 +30,9 @@ public class DocumentEntity {
     private String department_name;
     private String govt;
     private String nodal_officer_name;
-    private String getNodal_officer_mobile;
+    private String nodal_officer_mobile;
     private String nodal_officer_email;
     private String nodal_officer_designation;
-    private String content;
 
 
     public UUID getDocument_id() {
@@ -125,11 +124,11 @@ public class DocumentEntity {
     }
 
     public String getGetNodal_officer_mobile() {
-        return getNodal_officer_mobile;
+        return nodal_officer_mobile;
     }
 
     public void setGetNodal_officer_mobile(String getNodal_officer_mobile) {
-        this.getNodal_officer_mobile = getNodal_officer_mobile;
+        this.nodal_officer_mobile= getNodal_officer_mobile;
     }
 
     public String getNodal_officer_email() {
@@ -148,11 +147,5 @@ public class DocumentEntity {
         this.nodal_officer_designation = nodal_officer_designation;
     }
 
-    public String getContent() {
-        return content;
-    }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
 }
