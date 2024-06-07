@@ -31,5 +31,9 @@ public class DocumentController {
        return ResponseEntity.ok(document.getBody());
     }
 
-
+    @GetMapping("/documentofaperson/{clientId}")
+    public ResponseEntity<?> getDocumentByClientId(@PathVariable String clientId) {
+        System.out.println("Received request for document with clientId: " + clientId);
+        return documentService.getDocumentByClientId(clientId);
+    }
 }
