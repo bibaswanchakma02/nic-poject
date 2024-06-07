@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
 
 @Service
 public class DocumentService {
@@ -43,14 +41,13 @@ public class DocumentService {
     }
     public ResponseEntity<?> getDocumentByClientId(String clientId) {
         System.out.println("Searching for document with clientId: " + clientId);
-        Optional<Document> documentOptional = documentRepository.findByClientId(clientId);
+        List<Document> documents = documentRepository.findByClientId(clientId);
 
-        if (documentOptional.isPresent()) {
-            Document document = documentOptional.get();
-            return ResponseEntity.ok(document);
-        } else {
+        if (documents.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Document with clientId " + clientId + " not found");
+                    .body("Documents with clientId " + clientId + " not found");
+        } else {
+            return ResponseEntity.ok(documents);
         }
     }
 
