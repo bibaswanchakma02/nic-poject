@@ -2,18 +2,23 @@ package com.project1.project.controller;
 
 
 import com.project1.project.model.Document;
+import com.project1.project.model.Review;
+import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 public class DocumentController {
     @Autowired
     private DocumentService documentService;
+    @Autowired
+    private DocumentRepository documentRepository;
 
 
     @PostMapping("/savedocument")
@@ -36,4 +41,19 @@ public class DocumentController {
         System.out.println("Received request for document with clientId: " + clientId);
         return documentService.getDocumentByClientId(clientId);
     }
+
+    @PostMapping("/reviewdocument")
+    public  ResponseEntity<Review> saveOrUpdateReview(@RequestBody Review review){
+        Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(review.getDocumentId()));
+
+        if(documentOptional.isPresent()){
+            review.setDocumentId(String.valueOf(documentOptional.get().getDocument_id()));
+            Review savedReview = documentService.saveOrUpdateReview(review);
+            return ResponseEntity.ok(savedReview);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

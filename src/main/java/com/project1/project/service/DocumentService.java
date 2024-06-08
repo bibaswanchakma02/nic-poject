@@ -1,7 +1,9 @@
 package com.project1.project.service;
 
 import com.project1.project.model.Document;
+import com.project1.project.model.Review;
 import com.project1.project.repository.DocumentRepository;
+import com.project1.project.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class DocumentService {
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public UUID saveDocument(Document document) {
         document.setDocument_id(UUID.randomUUID());
@@ -49,6 +54,19 @@ public class DocumentService {
         } else {
             return ResponseEntity.ok(documents);
         }
+    }
+
+    public Review saveOrUpdateReview(Review review){
+        Optional<Review> existingReview = reviewRepository.findByDocumentId(review.getDocumentId());
+
+        if(existingReview.isPresent()){
+            Review existing = existingReview.get();
+            existing.setFeedback(review.getFeedback());
+
+            return reviewRepository.save(existing);
+        }
+
+        return reviewRepository.save(review);
     }
 
 
