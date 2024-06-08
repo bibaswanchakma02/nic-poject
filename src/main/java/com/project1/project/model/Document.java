@@ -127,7 +127,7 @@ public class Document{
         return nodal_officer_mobile;
     }
 
-    public void setGetNodal_officer_mobile(String getNodal_officer_mobile) {
+    public void setNodal_officer_mobile(String getNodal_officer_mobile) {
         this.nodal_officer_mobile= getNodal_officer_mobile;
     }
 

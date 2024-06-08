@@ -55,5 +55,13 @@ public class DocumentController {
         }
     }
 
+    @PutMapping("/editdocumentinfo/{id}")
+    public ResponseEntity<Document> updateDocument(@PathVariable("id") UUID documentId, @RequestBody Document updatedDocument) {
+        System.out.println("Received request to update document ID: " + documentId);
+        Document document = documentService.updateDocument(documentId, updatedDocument);
+        return ResponseEntity.ok(document);
+    }
+
+
 
 }
