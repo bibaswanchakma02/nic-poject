@@ -77,15 +77,14 @@ public class DocumentService {
     public Document updateDocument(UUID documentId, Document updatedDocument) {
         System.out.println("Updating document ID: " + documentId);
 
-        // Retrieve the document from the database
+
         Document documentToUpdate = documentRepository.findById(documentId)
                 .orElseThrow(() -> new RuntimeException("Document not found with id " + documentId));
 
-        // Update each field manually
+
         documentToUpdate.setClient_id(updatedDocument.getClient_id());
         documentToUpdate.setClient_secret(updatedDocument.getClient_secret());
-//        documentToUpdate.setCreated_on(updatedDocument.getCreated_on());
-//        documentToUpdate.setExpiry_on(updatedDocument.getExpiry_on());
+
         documentToUpdate.setState_code(updatedDocument.getState_code());
         documentToUpdate.setState_name(updatedDocument.getState_name());
         documentToUpdate.setDepartment_code(updatedDocument.getDepartment_code());
