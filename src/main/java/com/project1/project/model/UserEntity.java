@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @Builder
-@Document(collection = "userEntity")
+@Document(collection = "users")
 public class UserEntity implements UserDetails {
     private String username;
     private String password;
