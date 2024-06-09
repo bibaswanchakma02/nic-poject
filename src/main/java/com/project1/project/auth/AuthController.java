@@ -3,6 +3,7 @@ package com.project1.project.auth;
 
 import com.project1.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    @Autowired
     private final AuthenticationService service;
-
+    
+    @Autowired
     private final UserRepository userRepository;
 
     @PostMapping("/init")
@@ -25,6 +28,7 @@ public class AuthController {
             try {
                 AuthenticationResponse response = service.authenticate(request);
                 return new ResponseEntity<>(response, HttpStatus.OK);
+
             }catch (Exception e){
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
