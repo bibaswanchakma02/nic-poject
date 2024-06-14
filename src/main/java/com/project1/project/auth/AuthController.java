@@ -4,7 +4,6 @@ package com.project1.project.auth;
 import com.project1.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,15 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
+
     private final AuthenticationService service;
-    
-    @Autowired
+
+
     private final UserRepository userRepository;
 
     @PostMapping("/init")
     public ResponseEntity<AuthenticationResponse> init(@RequestBody AuthenticationRequest request){
-        if(userRepository.findByUsername(request.getUsername()).isPresent()){
+        if(userRepository.findByClientId(request.getClientId()).isPresent()){
             try {
                 AuthenticationResponse response = service.authenticate(request);
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -35,8 +34,8 @@ public class AuthController {
             }
         }else{
             RegisterRequest registerRequest = new RegisterRequest();
-            registerRequest.setUsername(request.getUsername());
-            registerRequest.setPassword(request.getPassword());
+            registerRequest.setClientId(request.getClientId());
+            registerRequest.setClient_secret(request.getClient_secret());
 
             try {
                 AuthenticationResponse response = service.register(registerRequest);
