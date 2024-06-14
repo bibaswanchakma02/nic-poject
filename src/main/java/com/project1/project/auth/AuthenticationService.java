@@ -10,6 +10,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -20,9 +23,18 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request){
+
+        Date date = new Date();
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(date);
+        calender.add(Calendar.YEAR, 1);
+        Date expiryDate = calender.getTime();
+
         var user = UserEntity.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .clientId(request.getClientId())
+                .client_secret(passwordEncoder.encode(request.getClient_secret()))
+                .created_on(date)
+                .expiry_on(expiryDate)
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
@@ -31,11 +43,11 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
-         authenticationManager.authenticate(
-                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-         );
-         var user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-         var jwtToken = jwtService.generateToken(user);
-         return AuthenticationResponse.builder().token(jwtToken).build();
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getClientId(), request.getClient_secret())
+        );
+        var user = userRepository.findByClientId(request.getClientId()).orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }
