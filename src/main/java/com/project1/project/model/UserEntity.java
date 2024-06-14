@@ -60,8 +60,8 @@ public class UserEntity implements UserDetails {
     }
 
     public String getPassword() {
-        return client_secret
-                ;
+        return client_secret;
+
     }
 
     public void setPassword(String password) {
