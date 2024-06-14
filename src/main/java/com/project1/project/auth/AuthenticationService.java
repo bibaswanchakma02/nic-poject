@@ -43,11 +43,11 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
-         authenticationManager.authenticate(
-                 new UsernamePasswordAuthenticationToken(request.getClientId(), request.getClient_secret())
-         );
-         var user = userRepository.findByClientId(request.getClientId()).orElseThrow();
-         var jwtToken = jwtService.generateToken(user);
-         return AuthenticationResponse.builder().token(jwtToken).build();
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getClientId(), request.getClient_secret())
+        );
+        var user = userRepository.findByClientId(request.getClientId()).orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }

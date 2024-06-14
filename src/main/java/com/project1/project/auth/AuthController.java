@@ -18,7 +18,7 @@ public class AuthController {
 
 
     private final AuthenticationService service;
-    
+
 
     private final UserRepository userRepository;
 
