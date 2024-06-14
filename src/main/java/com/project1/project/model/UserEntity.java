@@ -1,26 +1,33 @@
 package com.project1.project.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
 @Builder
-@Document(collection = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "client")
 public class UserEntity implements UserDetails {
-    private String username;
-    private String password;
+    private String clientId;
+    private String client_secret;
+    private Date created_on;
+    private Date expiry_on;
 
     private Role role;
 
     public String getUsername() {
-        return username;
+        return clientId;
     }
 
     @Override
@@ -44,7 +51,7 @@ public class UserEntity implements UserDetails {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.clientId = username;
     }
 
     @Override
@@ -53,11 +60,12 @@ public class UserEntity implements UserDetails {
     }
 
     public String getPassword() {
-        return password;
+        return client_secret
+                ;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.client_secret = password;
     }
 
     public Role getRole() {

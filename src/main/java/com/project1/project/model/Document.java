@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@org.springframework.data.mongodb.core.mapping.Document(collection = "client")
+@org.springframework.data.mongodb.core.mapping.Document(collection = "document")
 
 public class Document{
 
