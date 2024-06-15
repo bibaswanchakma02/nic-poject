@@ -4,6 +4,7 @@ package com.project1.project.controller;
 import com.project1.project.model.ArchiveDocument;
 import com.project1.project.model.ClientDocument;
 import com.project1.project.model.Review;
+import com.project1.project.model.WatermarkRequest;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,15 +75,27 @@ public class DocumentController {
 
     @PostMapping("/archivedocument")
     public ResponseEntity<?> archiveDocument(@RequestBody ArchiveDocument archiveDocument){
-        Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
+        Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
 
         if (clientdocumentOptional.isPresent()) {
-            archiveDocument.setApplicationTransactionId(String.valueOf(clientdocumentOptional.get().getFile_information().getApplication_transaction_id()));
+            archiveDocument.setApplicationTransactionId(clientdocumentOptional.get().getFile_information().getApplication_transaction_id());
             ArchiveDocument saveArchiveDocument = documentService.archiveDocument(archiveDocument);
 
             return ResponseEntity.ok(saveArchiveDocument);
         }else{
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/addwatermarktodocument")
+    public ResponseEntity<?> addWatermarkToDocument(@RequestBody WatermarkRequest watermarkRequest){
+        try {
+            ClientDocument updatedDocument = documentService.addWatermarkToDocument(watermarkRequest.getApplicationTransactionId(),
+                    watermarkRequest.getWatermark());
+            return new ResponseEntity<>(updatedDocument, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
