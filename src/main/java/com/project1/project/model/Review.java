@@ -4,15 +4,18 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "reviews")
+@Document(collection = "Review_document")
 public class Review {
 
     @Id
     private String id;
-    private String documentId;
-    private String feedback;
+    private long applicationTransactionId;
+    private String review;
+
+
 }
