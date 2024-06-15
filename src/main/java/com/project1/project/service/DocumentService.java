@@ -3,6 +3,7 @@ package com.project1.project.service;
 import com.project1.project.model.ArchiveDocument;
 import com.project1.project.model.ClientDocument;
 
+import com.project1.project.model.PdfPasswordRequest;
 import com.project1.project.model.Review;
 import com.project1.project.repository.ArchiveRepository;
 import com.project1.project.repository.DocumentRepository;
@@ -10,6 +11,8 @@ import com.project1.project.repository.ReviewRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,7 +184,43 @@ public class DocumentService {
     }
 
 
+    public String addPasswordToPdf(PdfPasswordRequest request) throws IOException {
+        Optional<ClientDocument> existingDocument = documentRepository.findByApplicationTransactionId(request.getApplicationTransactionId());
 
+        if (!existingDocument.isPresent()) {
+            throw new IOException("Document not found");
+        }
+
+        ClientDocument clientDocument = existingDocument.get();
+
+        byte[] pdfBytes = Base64.getDecoder().decode(clientDocument.getDocument().getActual_document_base_64());
+
+        PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes));
+
+        // Set the password protection
+        AccessPermission accessPermission = new AccessPermission();
+        StandardProtectionPolicy protectionPolicy = new StandardProtectionPolicy(
+                request.getPassword(), request.getPassword(), accessPermission);
+
+        // Customize the protection policy if necessary
+        protectionPolicy.setEncryptionKeyLength(128);  // 128-bit key length
+        protectionPolicy.setPermissions(accessPermission);
+        document.protect(protectionPolicy);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        document.save(outputStream);
+        document.close();
+
+        String base64PdfWithPassword = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+
+        // Update the ClientDocument with the new Base64 content
+        clientDocument.getDocument().setActual_document_base_64(base64PdfWithPassword);
+
+        // Save the updated ClientDocument
+        documentRepository.save(clientDocument);
+
+        return base64PdfWithPassword;
+    }
 
 
 

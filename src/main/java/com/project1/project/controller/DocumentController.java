@@ -1,10 +1,7 @@
 package com.project1.project.controller;
 
 
-import com.project1.project.model.ArchiveDocument;
-import com.project1.project.model.ClientDocument;
-import com.project1.project.model.Review;
-import com.project1.project.model.WatermarkRequest;
+import com.project1.project.model.*;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +130,16 @@ public class DocumentController {
             return ResponseEntity.ok(savedDocument);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/setadocumentconfidential")
+    public ResponseEntity<?> addPasswordToPdf(@RequestBody PdfPasswordRequest request) {
+        try {
+            String base64PdfWithPassword = documentService.addPasswordToPdf(request);
+            return ResponseEntity.ok(base64PdfWithPassword);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to add password to PDF: " + e.getMessage());
         }
     }
 
