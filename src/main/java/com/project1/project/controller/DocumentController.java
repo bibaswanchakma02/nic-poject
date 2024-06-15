@@ -1,11 +1,10 @@
 package com.project1.project.controller;
 
 
-
 import com.project1.project.model.ArchiveDocument;
-
 import com.project1.project.model.ClientDocument;
 import com.project1.project.model.Review;
+import com.project1.project.model.WatermarkRequest;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
 import javax.swing.text.html.Option;
-
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 public class DocumentController {
-
     private final DocumentService documentService;
     private final DocumentRepository documentRepository;
 
@@ -39,10 +36,13 @@ public class DocumentController {
         return ResponseEntity.ok(documentId);
     }
 
+
     @GetMapping("/getadocument/{id}")
-    public ResponseEntity<ClientDocument> getDocument(@PathVariable("id") UUID documentId) {
-        ResponseEntity<ClientDocument> document = documentService.getDocumentById(documentId);
-        return ResponseEntity.ok(document.getBody());
+    public ResponseEntity<ClientDocument> getDocument(@PathVariable("id") UUID document_id){
+        System.out.println("received request for document ID: " + document_id);
+        ResponseEntity<ClientDocument> document = documentService.getDocumentById(document_id);
+
+       return ResponseEntity.ok(document.getBody());
     }
 
     @GetMapping("/documentofaperson/{personId}")
@@ -58,7 +58,6 @@ public class DocumentController {
     }
 
     @PostMapping("/reviewdocument")
-
     public ResponseEntity<?> saveOrUpdateReview(@RequestBody Review review) {
         Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(review.getApplicationTransactionId());
 
@@ -68,12 +67,9 @@ public class DocumentController {
 
             return ResponseEntity.ok(savedReview);
         }else{
-
             return ResponseEntity.notFound().build();
         }
     }
-
-
 
 
 
@@ -86,6 +82,25 @@ public class DocumentController {
             return ResponseEntity.ok(savedArchiveDocument);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+//    @PutMapping("/editdocumentinfo/{id}")
+//    public ResponseEntity<Document> updateDocument(@PathVariable("id") UUID documentId, @RequestBody Document updatedDocument) {
+//        System.out.println("Received request to update document ID: " + documentId);
+//        Document document = documentService.updateDocument(documentId, updatedDocument);
+//        return ResponseEntity.ok(document);
+//    }
+
+    @PostMapping("/addwatermarktodocument")
+    public ResponseEntity<?> addWatermarkToDocument(@RequestBody WatermarkRequest watermarkRequest){
+        try {
+            ClientDocument updatedDocument = documentService.addWatermarkToDocument(watermarkRequest.getApplicationTransactionId(),
+                    watermarkRequest.getWatermark());
+            return new ResponseEntity<>(updatedDocument, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -108,6 +123,8 @@ public class DocumentController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
 
 }
