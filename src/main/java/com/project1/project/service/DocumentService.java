@@ -91,18 +91,7 @@ public class DocumentService {
     }
 
 
-    public String deleteDocument(UUID documentId) {
-        ClientDocument document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        mongoTemplate.save(document, "archive_documents");
-        LOGGER.info("Document archived successfully with ID: " + documentId);
-
-        documentRepository.deleteById(documentId);
-        LOGGER.info("Document deleted successfully with ID: " + documentId);
-
-        return "Document archived successfully";
-    }
 
     public Optional<Review> getReviewByApplicationTransactionId(long applicationTransactionId) {
         return reviewRepository.findByApplicationTransactionId(applicationTransactionId);
