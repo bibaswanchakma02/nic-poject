@@ -78,6 +78,7 @@ public class DocumentService {
 
     public ArchiveDocument archiveDocument(ArchiveDocument archiveDocument) {
         Optional<ArchiveDocument> existingArhcive = archiveRepository.findByApplicationTransactionId(Long.valueOf(archiveDocument.getApplicationTransactionId()));
+        Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
 
         if(existingArhcive.isPresent()){
             ArchiveDocument archivedoc = existingArhcive.get();
@@ -86,6 +87,9 @@ public class DocumentService {
             return archiveRepository.save(archivedoc);
 
         }
+
+        documentRepository.deleteById(archivedDocument.get().getDocument_id());
+
 
         return archiveRepository.save(archiveDocument);
     }
