@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface ReviewRepository extends MongoRepository<Review, String> {
 
 
-    Optional<Review> findByApplicationTransactionId(String application_id);
+    Optional<Review> findByApplicationTransactionId(long application_id);
 }

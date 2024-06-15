@@ -63,10 +63,10 @@ public class DocumentService {
 
     }
 
-    public Review saveOrUpdateReview(Review review){
-        Optional<Review> existingReview = reviewRepository.findByApplicationTransactionId(String.valueOf(review.getApplicationTransactionId()));
+    public Review saveOrUpdateReview(Review review) {
+        Optional<Review> existingReview = reviewRepository.findByApplicationTransactionId(review.getApplicationTransactionId());
 
-        if(existingReview.isPresent()){
+        if (existingReview.isPresent()) {
             Review existing = existingReview.get();
             existing.setReview(review.getReview());
 
@@ -77,37 +77,30 @@ public class DocumentService {
     }
 
     public ArchiveDocument archiveDocument(ArchiveDocument archiveDocument) {
-        Optional<ArchiveDocument> existingArhcive = archiveRepository.findByApplicationTransactionId(Long.valueOf(archiveDocument.getApplicationTransactionId()));
-        Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
+        Optional<ArchiveDocument> existingArchive = archiveRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
+        Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
 
-        if(existingArhcive.isPresent()){
-            ArchiveDocument archivedoc = existingArhcive.get();
+        if (existingArchive.isPresent()) {
+            ArchiveDocument archivedoc = existingArchive.get();
             archivedoc.setArchival_comments(archiveDocument.getArchival_comments());
-
             return archiveRepository.save(archivedoc);
-
         }
 
-        documentRepository.deleteById(archivedDocument.get().getDocument_id());
-
-
+        archivedDocument.ifPresent(document -> documentRepository.deleteById(document.getDocument_id()));
         return archiveRepository.save(archiveDocument);
     }
 
 
-    public String deleteDocument(UUID documentId) {
-        ClientDocument document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        mongoTemplate.save(document, "archive_documents");
-        LOGGER.info("Document archived successfully with ID: " + documentId);
-
-        documentRepository.deleteById(documentId);
-        LOGGER.info("Document deleted successfully with ID: " + documentId);
-
-        return "Document archived successfully";
+    public Optional<Review> getReviewByApplicationTransactionId(long applicationTransactionId) {
+        return reviewRepository.findByApplicationTransactionId(applicationTransactionId);
     }
 
+
+
+    public Optional<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(long applicationTransactionId) {
+        return archiveRepository.findByApplicationTransactionId(applicationTransactionId);
+    }
 
 
 
