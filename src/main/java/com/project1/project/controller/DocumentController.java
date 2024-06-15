@@ -1,6 +1,7 @@
 package com.project1.project.controller;
 
 
+import com.project1.project.model.ArchiveDocument;
 import com.project1.project.model.ClientDocument;
 import com.project1.project.model.Review;
 import com.project1.project.repository.DocumentRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,10 +20,12 @@ import java.util.UUID;
 @RestController
 public class DocumentController {
     private final DocumentService documentService;
+    private final DocumentRepository documentRepository;
 
     @Autowired
-    public DocumentController(DocumentService documentService) {
+    public DocumentController(DocumentService documentService, DocumentRepository documentRepository) {
         this.documentService = documentService;
+        this.documentRepository = documentRepository;
     }
 
     @PostMapping("/savedocument")
@@ -40,7 +44,8 @@ public class DocumentController {
     }
 
     @GetMapping("/documentofaperson/{personId}")
-    public ResponseEntity<List<ClientDocument>> getDocumentsByPersonId(@PathVariable int personId) {
+    public ResponseEntity<List<ClientDocument>> getDocumentsByPersonId(@PathVariable("personId") int personId) {
+        System.out.println("received request for personId: " + personId);
         List<ClientDocument> documents = documentService.getDocumentsByPersonId(personId);
 
         if (documents.isEmpty()) {
@@ -50,23 +55,34 @@ public class DocumentController {
         }
     }
 
-//    @PostMapping("/reviewdocument")
-//    public  ResponseEntity<Review> saveOrUpdateReview(@RequestBody Review review){
-//        Optional<Document> documentOptional = documentRepository.findById(UUID.fromString(review.getDocumentId()));
-//
-//        if(documentOptional.isPresent()){
-//            review.setDocumentId(String.valueOf(documentOptional.get().getDocument_id()));
-//            Review savedReview = documentService.saveOrUpdateReview(review);
-//            return ResponseEntity.ok(savedReview);
-//        }else{
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @PostMapping("/reviewdocument")
+    public ResponseEntity<?> saveOrUpdateReview(@RequestBody Review review) {
+        Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(review.getApplicationTransactionId());
 
-    @DeleteMapping("archivedocument/{documentId}")
-    public ResponseEntity<String> deleteDocument(@PathVariable UUID documentId) {
-        String message = documentService.deleteDocument(documentId);
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        if (clientdocumentOptional.isPresent()) {
+            review.setApplicationTransactionId(clientdocumentOptional.get().getFile_information().getApplication_transaction_id());
+            Review savedReview = documentService.saveOrUpdateReview(review);
+
+            return ResponseEntity.ok(savedReview);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+    @PostMapping("/archivedocument")
+    public ResponseEntity<?> archiveDocument(@RequestBody ArchiveDocument archiveDocument){
+        Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
+
+        if (clientdocumentOptional.isPresent()) {
+            archiveDocument.setApplicationTransactionId(String.valueOf(clientdocumentOptional.get().getFile_information().getApplication_transaction_id()));
+            ArchiveDocument saveArchiveDocument = documentService.archiveDocument(archiveDocument);
+
+            return ResponseEntity.ok(saveArchiveDocument);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
 //    @PutMapping("/editdocumentinfo/{id}")

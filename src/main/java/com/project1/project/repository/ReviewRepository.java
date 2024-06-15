@@ -6,5 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface ReviewRepository extends MongoRepository<Review, String> {
-    Optional<Review> findByDocumentId(String document_id);
+
+
+    Optional<Review> findByApplicationTransactionId(String application_id);
 }

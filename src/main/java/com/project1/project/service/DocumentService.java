@@ -1,14 +1,15 @@
 package com.project1.project.service;
 
+import com.project1.project.model.ArchiveDocument;
 import com.project1.project.model.ClientDocument;
 
 import com.project1.project.model.Review;
+import com.project1.project.repository.ArchiveRepository;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.*;
@@ -28,6 +29,9 @@ public class DocumentService {
         this.documentRepository = documentRepository;
         this.mongoTemplate = mongoTemplate;
     }
+
+    @Autowired
+    public ArchiveRepository archiveRepository;
 
     public UUID saveDocument(ClientDocument document) {
         document.setDocument_id(UUID.randomUUID());
@@ -54,21 +58,38 @@ public class DocumentService {
 
     }
     public List<ClientDocument> getDocumentsByPersonId(int personId) {
+        System.out.println("searching for document with personId: " + personId);
         return documentRepository.findByPersonId(personId);
+
     }
 
     public Review saveOrUpdateReview(Review review){
-        Optional<Review> existingReview = reviewRepository.findByDocumentId(review.getDocumentId());
+        Optional<Review> existingReview = reviewRepository.findByApplicationTransactionId(String.valueOf(review.getApplicationTransactionId()));
 
         if(existingReview.isPresent()){
             Review existing = existingReview.get();
-            existing.setFeedback(review.getFeedback());
+            existing.setReview(review.getReview());
 
             return reviewRepository.save(existing);
         }
 
         return reviewRepository.save(review);
     }
+
+    public ArchiveDocument archiveDocument(ArchiveDocument archiveDocument) {
+        Optional<ArchiveDocument> existingArhcive = archiveRepository.findByApplicationTransactionId(Long.valueOf(archiveDocument.getApplicationTransactionId()));
+
+        if(existingArhcive.isPresent()){
+            ArchiveDocument archivedoc = existingArhcive.get();
+            archivedoc.setArchival_comments(archiveDocument.getArchival_comments());
+
+            return archiveRepository.save(archivedoc);
+
+        }
+
+        return archiveRepository.save(archiveDocument);
+    }
+
 
     public String deleteDocument(UUID documentId) {
         ClientDocument document = documentRepository.findById(documentId)
@@ -84,53 +105,8 @@ public class DocumentService {
     }
 
 
-//    @Transactional
-//    public Document updateDocument(UUID documentId, Document updatedDocument) {
-//        System.out.println("Updating document ID: " + documentId);
-//
-//        Document documentToUpdate = documentRepository.findById(documentId)
-//                .orElseThrow(() -> new RuntimeException("Document not found with id " + documentId));
-//
-//        if (updatedDocument.getClient_id() != null) {
-//            documentToUpdate.setClient_id(updatedDocument.getClient_id());
-//        }
-//        if (updatedDocument.getClient_secret() != null) {
-//            documentToUpdate.setClient_secret(updatedDocument.getClient_secret());
-//        }
-//        if (updatedDocument.getState_code() != null) {
-//            documentToUpdate.setState_code(updatedDocument.getState_code());
-//        }
-//        if (updatedDocument.getState_name() != null) {
-//            documentToUpdate.setState_name(updatedDocument.getState_name());
-//        }
-//        if (updatedDocument.getDepartment_code() != null) {
-//            documentToUpdate.setDepartment_code(updatedDocument.getDepartment_code());
-//        }
-//        if (updatedDocument.getDepartment_name() != null) {
-//            documentToUpdate.setDepartment_name(updatedDocument.getDepartment_name());
-//        }
-//        if (updatedDocument.getGovt() != null) {
-//            documentToUpdate.setGovt(updatedDocument.getGovt());
-//        }
-//        if (updatedDocument.getNodal_officer_name() != null) {
-//            documentToUpdate.setNodal_officer_name(updatedDocument.getNodal_officer_name());
-//        }
-//        if (updatedDocument.getNodal_officer_mobile() != null) {
-//            documentToUpdate.setNodal_officer_mobile(updatedDocument.getNodal_officer_mobile());
-//        }
-//        if (updatedDocument.getNodal_officer_email() != null) {
-//            documentToUpdate.setNodal_officer_email(updatedDocument.getNodal_officer_email());
-//        }
-//        if (updatedDocument.getNodal_officer_designation() != null) {
-//            documentToUpdate.setNodal_officer_designation(updatedDocument.getNodal_officer_designation());
-//        }
-//
-//        // Save the updated document
-//        Document savedDocument = documentRepository.save(documentToUpdate);
-//        System.out.println("Document updated: " + savedDocument);
-//
-//        return savedDocument;
-//    }
+
+
 
 
 
