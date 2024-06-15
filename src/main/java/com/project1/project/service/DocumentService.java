@@ -77,23 +77,18 @@ public class DocumentService {
     }
 
     public ArchiveDocument archiveDocument(ArchiveDocument archiveDocument) {
-        Optional<ArchiveDocument> existingArhcive = archiveRepository.findByApplicationTransactionId(Long.valueOf(archiveDocument.getApplicationTransactionId()));
-        Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
+        Optional<ArchiveDocument> existingArchive = archiveRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
+        Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
 
-        if(existingArhcive.isPresent()){
-            ArchiveDocument archivedoc = existingArhcive.get();
+        if (existingArchive.isPresent()) {
+            ArchiveDocument archivedoc = existingArchive.get();
             archivedoc.setArchival_comments(archiveDocument.getArchival_comments());
-
             return archiveRepository.save(archivedoc);
-
         }
 
-        documentRepository.deleteById(archivedDocument.get().getDocument_id());
-
-
+        archivedDocument.ifPresent(document -> documentRepository.deleteById(document.getDocument_id()));
         return archiveRepository.save(archiveDocument);
     }
-
 
 
 
@@ -101,6 +96,11 @@ public class DocumentService {
         return reviewRepository.findByApplicationTransactionId(applicationTransactionId);
     }
 
+
+
+    public Optional<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(long applicationTransactionId) {
+        return archiveRepository.findByApplicationTransactionId(applicationTransactionId);
+    }
 
 
 

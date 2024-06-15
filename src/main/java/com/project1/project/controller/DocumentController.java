@@ -78,18 +78,15 @@ public class DocumentController {
 
 
     @PostMapping("/archivedocument")
-    public ResponseEntity<?> archiveDocument(@RequestBody ArchiveDocument archiveDocument){
-        Optional<ClientDocument> clientdocumentOptional = documentRepository.findByApplicationTransactionId(Long.parseLong(archiveDocument.getApplicationTransactionId()));
+    public ResponseEntity<?> archiveDocument(@RequestBody ArchiveDocument archiveDocument) {
+        Optional<ClientDocument> clientDocumentOptional = documentRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
 
-        if (clientdocumentOptional.isPresent()) {
-            archiveDocument.setApplicationTransactionId(String.valueOf(clientdocumentOptional.get().getFile_information().getApplication_transaction_id()));
-            ArchiveDocument saveArchiveDocument = documentService.archiveDocument(archiveDocument);
-
-            return ResponseEntity.ok(saveArchiveDocument);
-        }else{
+        if (clientDocumentOptional.isPresent()) {
+            ArchiveDocument savedArchiveDocument = documentService.archiveDocument(archiveDocument);
+            return ResponseEntity.ok(savedArchiveDocument);
+        } else {
             return ResponseEntity.notFound().build();
         }
-
     }
 
     @GetMapping("/viewreviewlog/{applicationTransactionId}")
@@ -100,4 +97,17 @@ public class DocumentController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/vieweditlog/{applicationTransactionId}")
+    public ResponseEntity<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(@PathVariable long applicationTransactionId) {
+        Optional<ArchiveDocument> archiveDocumentOptional = documentService.getArchiveDocumentByApplicationTransactionId(applicationTransactionId);
+
+        if (archiveDocumentOptional.isPresent()) {
+            return ResponseEntity.ok(archiveDocumentOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }
