@@ -32,7 +32,7 @@ public class DocumentService {
 
     @Autowired
     public ArchiveRepository archiveRepository;
-
+    //saving the document
     public UUID saveDocument(ClientDocument document) {
         document.setDocument_id(UUID.randomUUID());
 
@@ -48,7 +48,7 @@ public class DocumentService {
         documentRepository.save(document);
         return document.getDocument_id();
     }
-
+    // getting a document using documentID
     public ResponseEntity<ClientDocument> getDocumentById(UUID documentId) {
         System.out.println("searching for document id: " + documentId);
         ClientDocument document = documentRepository.findById(documentId).orElse(null);
@@ -57,12 +57,15 @@ public class DocumentService {
         return ResponseEntity.ok(document);
 
     }
+
+    //getting a docuemnt using personID
     public List<ClientDocument> getDocumentsByPersonId(int personId) {
         System.out.println("searching for document with personId: " + personId);
         return documentRepository.findByPersonId(personId);
 
     }
 
+    //save review of a document
     public Review saveOrUpdateReview(Review review) {
         Optional<Review> existingReview = reviewRepository.findByApplicationTransactionId(review.getApplicationTransactionId());
 
@@ -76,6 +79,8 @@ public class DocumentService {
         return reviewRepository.save(review);
     }
 
+
+    // archive/delete a document
     public ArchiveDocument archiveDocument(ArchiveDocument archiveDocument) {
         Optional<ArchiveDocument> existingArchive = archiveRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
         Optional<ClientDocument> archivedDocument = documentRepository.findByApplicationTransactionId(archiveDocument.getApplicationTransactionId());
@@ -91,19 +96,34 @@ public class DocumentService {
     }
 
 
-
-    public Optional<Review> getReviewByApplicationTransactionId(long applicationTransactionId) {
+    //viewing review log
+    public Optional<Review> viewReviewLog(long applicationTransactionId) {
         return reviewRepository.findByApplicationTransactionId(applicationTransactionId);
     }
 
 
-
-    public Optional<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(long applicationTransactionId) {
+   //Viewing the edit logs
+    public Optional<ArchiveDocument> viewEditLog(long applicationTransactionId) {
         return archiveRepository.findByApplicationTransactionId(applicationTransactionId);
     }
 
 
+    //Update a Document
+    public void deleteDocumentById(UUID documentId) {
+        documentRepository.deleteById(documentId);
+    }
+    public ClientDocument updateDocument(ClientDocument document) {
+        Date date = new Date();
+        document.setCreated_on(date);
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, 1);
+        Date expiryDate = calendar.getTime();
+        document.setExpiry_on(expiryDate);
+
+        return documentRepository.save(document);
+    }
 
 
 

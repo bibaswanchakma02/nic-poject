@@ -91,7 +91,7 @@ public class DocumentController {
 
     @GetMapping("/viewreviewlog/{applicationTransactionId}")
     public ResponseEntity<Review> getReviewByApplicationId(@PathVariable long applicationTransactionId) {
-        Optional<Review> reviewOptional = documentService.getReviewByApplicationTransactionId(applicationTransactionId);
+        Optional<Review> reviewOptional = documentService.viewReviewLog(applicationTransactionId);
 
         return reviewOptional
                 .map(ResponseEntity::ok)
@@ -100,10 +100,27 @@ public class DocumentController {
 
     @GetMapping("/vieweditlog/{applicationTransactionId}")
     public ResponseEntity<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(@PathVariable long applicationTransactionId) {
-        Optional<ArchiveDocument> archiveDocumentOptional = documentService.getArchiveDocumentByApplicationTransactionId(applicationTransactionId);
+        Optional<ArchiveDocument> archiveDocumentOptional = documentService.viewEditLog(applicationTransactionId);
 
         if (archiveDocumentOptional.isPresent()) {
             return ResponseEntity.ok(archiveDocumentOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    @PostMapping("/editdocumentinfo/{documentId}")
+    public ResponseEntity<?> editDocumentInfo(@PathVariable UUID documentId, @RequestBody ClientDocument newDocument) {
+        ResponseEntity<ClientDocument> responseEntity = documentService.getDocumentById(documentId);
+
+        if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+            documentService.deleteDocumentById(documentId);
+
+            newDocument.setDocument_id(documentId);
+            ClientDocument savedDocument = documentService.updateDocument(newDocument);
+
+            return ResponseEntity.ok(savedDocument);
         } else {
             return ResponseEntity.notFound().build();
         }
