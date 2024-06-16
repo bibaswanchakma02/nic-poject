@@ -1,5 +1,6 @@
 package com.project1.project.model;
 
+
 public class PdfPasswordRequest {
     private long applicationTransactionId;
     private String password;
