@@ -1,10 +1,7 @@
 package com.project1.project.controller;
 
 
-import com.project1.project.model.ArchiveDocument;
-import com.project1.project.model.ClientDocument;
-import com.project1.project.model.Review;
-import com.project1.project.model.WatermarkRequest;
+import com.project1.project.model.*;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,12 +82,7 @@ public class DocumentController {
         }
     }
 
-//    @PutMapping("/editdocumentinfo/{id}")
-//    public ResponseEntity<Document> updateDocument(@PathVariable("id") UUID documentId, @RequestBody Document updatedDocument) {
-//        System.out.println("Received request to update document ID: " + documentId);
-//        Document document = documentService.updateDocument(documentId, updatedDocument);
-//        return ResponseEntity.ok(document);
-//    }
+
 
     @PostMapping("/addwatermarktodocument")
     public ResponseEntity<?> addWatermarkToDocument(@RequestBody WatermarkRequest watermarkRequest){
@@ -106,7 +98,7 @@ public class DocumentController {
 
     @GetMapping("/viewreviewlog/{applicationTransactionId}")
     public ResponseEntity<Review> getReviewByApplicationId(@PathVariable long applicationTransactionId) {
-        Optional<Review> reviewOptional = documentService.getReviewByApplicationTransactionId(applicationTransactionId);
+        Optional<Review> reviewOptional = documentService.viewReviewLog(applicationTransactionId);
 
         return reviewOptional
                 .map(ResponseEntity::ok)
@@ -115,7 +107,7 @@ public class DocumentController {
 
     @GetMapping("/vieweditlog/{applicationTransactionId}")
     public ResponseEntity<ArchiveDocument> getArchiveDocumentByApplicationTransactionId(@PathVariable long applicationTransactionId) {
-        Optional<ArchiveDocument> archiveDocumentOptional = documentService.getArchiveDocumentByApplicationTransactionId(applicationTransactionId);
+        Optional<ArchiveDocument> archiveDocumentOptional = documentService.viewEditLog(applicationTransactionId);
 
         if (archiveDocumentOptional.isPresent()) {
             return ResponseEntity.ok(archiveDocumentOptional.get());
@@ -124,6 +116,32 @@ public class DocumentController {
         }
     }
 
+
+    @PostMapping("/editdocumentinfo/{documentId}")
+    public ResponseEntity<?> editDocumentInfo(@PathVariable UUID documentId, @RequestBody ClientDocument newDocument) {
+        ResponseEntity<ClientDocument> responseEntity = documentService.getDocumentById(documentId);
+
+        if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+            documentService.deleteDocumentById(documentId);
+
+            newDocument.setDocument_id(documentId);
+            ClientDocument savedDocument = documentService.updateDocument(newDocument);
+
+            return ResponseEntity.ok(savedDocument);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/setadocumentconfidential")
+    public ResponseEntity<?> addPasswordToPdf(@RequestBody PdfPasswordRequest request) {
+        try {
+            String base64PdfWithPassword = documentService.addPasswordToPdf(request);
+            return ResponseEntity.ok(base64PdfWithPassword);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to add password to PDF: " + e.getMessage());
+        }
+    }
 
 
 
