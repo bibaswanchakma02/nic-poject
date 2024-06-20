@@ -133,7 +133,7 @@ public class DocumentService {
             float pageWidth = pageSize.getWidth();
             float pageHeight = pageSize.getHeight();
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.PREPEND, true, true);
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 70);
             contentStream.setNonStrokingColor(200, 200, 200);    //Light Grey colour
 
@@ -143,7 +143,7 @@ public class DocumentService {
 
             //calculating middle coordinates
             float centerX = (pageWidth - stringWidth) / 2;
-            float centerY = (pageHeight - stringHeight) / 2;
+            float centerY = (pageHeight - stringHeight) / 3;
 
             contentStream.beginText();
             contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(45), centerX, centerY));  // adjust the position and angle as required
