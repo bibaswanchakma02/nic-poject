@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/")
 public class DocumentController {
     private final DocumentService documentService;
     private final DocumentRepository documentRepository;
