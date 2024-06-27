@@ -36,7 +36,7 @@ public class AuthService {
         var user = Client.builder()
                 .client_id(request.getClient_id())
                 .client_secret(passwordEncoder.encode(request.getClient_secret()))
-                .created_at(date)
+                .created_on(date)
                 .expiry_on(expiryDate)
                 .role(Role.USER)
                 .build();
