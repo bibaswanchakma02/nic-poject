@@ -11,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,13 +18,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "client")
-public class UserEntity implements UserDetails {
+public class Client implements UserDetails {
 
     @Id
     private String client_id;
     private String client_secret;
-    private Date created_on;
-    private Date expiry_on;
+    private long mobile_no;
+    private String email_id;
+    private String name;
+    private String gender;
+    private String dob;
+    private String address;
 
     private Role role;
 

@@ -1,6 +1,8 @@
 package com.project1.project.controller;
 
 
+import com.project1.project.dto.PdfPasswordRequest;
+import com.project1.project.dto.WatermarkRequest;
 import com.project1.project.model.*;
 import com.project1.project.repository.DocumentRepository;
 import com.project1.project.service.DocumentService;

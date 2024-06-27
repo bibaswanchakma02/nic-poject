@@ -1,6 +1,9 @@
 package com.project1.project.auth;
 
 
+import com.project1.project.dto.AuthenticationRequest;
+import com.project1.project.dto.AuthenticationResponse;
+import com.project1.project.dto.RegisterRequest;
 import com.project1.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
 
-    private final AuthenticationService service;
+    private final AuthService service;
 
 
     private final UserRepository userRepository;

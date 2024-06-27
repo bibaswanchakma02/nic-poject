@@ -3,7 +3,7 @@ package com.project1.project.service;
 import com.project1.project.model.ArchiveDocument;
 import com.project1.project.model.ClientDocument;
 
-import com.project1.project.model.PdfPasswordRequest;
+import com.project1.project.dto.PdfPasswordRequest;
 import com.project1.project.model.Review;
 import com.project1.project.repository.ArchiveRepository;
 import com.project1.project.repository.DocumentRepository;
