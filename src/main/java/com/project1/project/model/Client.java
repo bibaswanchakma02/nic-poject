@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -23,6 +24,8 @@ public class Client implements UserDetails {
     @Id
     private String client_id;
     private String client_secret;
+    private Date created_at;
+    private Date expiry_on;
     private long mobile_no;
     private String email_id;
     private String name;

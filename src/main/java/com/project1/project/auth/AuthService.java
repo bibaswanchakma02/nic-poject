@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -24,15 +27,17 @@ public class AuthService {
 
     public AuthenticationResponse register(RegisterRequest request){
 
-//        Date date = new Date();
-//        Calendar calender = Calendar.getInstance();
-//        calender.setTime(date);
-//        calender.add(Calendar.YEAR, 1);
-//        Date expiryDate = calender.getTime();
+        Date date = new Date();
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(date);
+        calender.add(Calendar.YEAR, 1);
+        Date expiryDate = calender.getTime();
 
         var user = Client.builder()
                 .client_id(request.getClient_id())
                 .client_secret(passwordEncoder.encode(request.getClient_secret()))
+                .created_at(date)
+                .expiry_on(expiryDate)
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
